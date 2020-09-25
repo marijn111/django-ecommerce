@@ -19,6 +19,29 @@ function updateUserOrder(productID, action) {
         })
 }
 
+function addCookieItem(productId, action) {
+    if (action === 'add') {
+        if (cart[productId] == undefined) {
+            cart[productId] = {'quantity': 1};
+        } else {
+            cart[productId]['quantity'] += 1;
+        }
+    }
+
+    if (action === 'remove') {
+        cart[productId]['quantity'] -= 1;
+
+        if (cart[productId]['quantity'] <= 0) {
+            console.log('Item should be deleted');
+            delete cart[productId];
+        }
+    }
+    console.log('CART:', cart);
+    document.cookie = 'cart=' + JSON.stringify(cart) + ';domain=;path=/';
+
+    location.reload();
+}
+
 
 jQuery(document).ready(function () {
     let updateBtns = jQuery('.update-cart');
@@ -29,9 +52,9 @@ jQuery(document).ready(function () {
             var action = this.dataset.action;
 
             if (user === 'AnonymousUser') {
-                console.log('user is not authenticated');
+                addCookieItem(productId, action);
             } else {
-                updateUserOrder(productId, action)
+                updateUserOrder(productId, action);
             }
         })
     });
